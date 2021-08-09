@@ -2,7 +2,9 @@ package com.example.kafka.producer;
 
 import java.util.Map;
 
+import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,12 +24,18 @@ public class KafkaProducerConfig {
     @Value("${kafka.bootstrapAddress}")
     private String bootstrapAddress;
 
+    @Value("${kafka.ssl.truststore.location}")
+    private String trustStoreLocation;
+
     @Bean
     public ProducerFactory<String, Call> producerFactory() {
         final Map<String, Object> configProps = Map.of(
             ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress,
             ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
-            ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+            ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class,
+            SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, trustStoreLocation,
+            CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL"
+        );
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 

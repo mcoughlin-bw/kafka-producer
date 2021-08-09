@@ -1,7 +1,5 @@
 package com.example.kafka.producer;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,6 +11,7 @@ import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import com.example.kafka.model.Call;
+import com.example.kafka.util.CallCreator;
 
 @SpringBootApplication
 @EnableScheduling
@@ -22,8 +21,7 @@ public class KafkaProducerApplication {
 
     @Scheduled(fixedRate = 10_000)
     public void sendMessage() {
-        final Call call = new Call();
-        call.setStartTime(new Date());
+        final Call call = CallCreator.createCall();
 
         final ListenableFuture<SendResult<String, Call>> future =
             kafkaTemplate.send("insights", call);
